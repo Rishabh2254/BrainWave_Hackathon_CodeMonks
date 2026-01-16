@@ -14,9 +14,8 @@ const Hero = () => {
   const featureCardsRef = useRef<HTMLDivElement>(null)
 
   const handleGetStarted = () => {
-    // Placeholder for authentication logic
-    console.log('Get Started clicked');
-    alert('Authentication functionality to be implemented');
+    // Navigate to user selection page
+    window.location.href = '/select-user';
   };
 
   useEffect(() => {

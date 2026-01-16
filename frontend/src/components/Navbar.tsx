@@ -4,7 +4,6 @@ import { Brain } from 'lucide-react';
 const Navbar = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -39,9 +38,8 @@ const Navbar = () => {
   };
 
   const handleAuth = () => {
-    // Placeholder for authentication logic
-    console.log('Sign In/Sign Up clicked');
-    alert('Authentication functionality to be implemented');
+    // Navigate to user selection page
+    window.location.href = '/select-user';
   };
 
   return (
