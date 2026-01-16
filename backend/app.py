@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 load_dotenv()
 
@@ -10,6 +11,7 @@ os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 from config.config import Config
 from routes.auth import auth_bp, init_oauth
 from routes.user import user_bp
+from routes.assessment import assessment_bp
 from utils.decorators import requires_auth
 
 
@@ -17,16 +19,32 @@ def create_app():
     """Application factory pattern"""
     app = Flask(__name__)
     
+    # Trust proxy headers from Cloudflare
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+    
+    # Disable automatic trailing slash redirects
+    app.url_map.strict_slashes = False
+    
     app.secret_key = Config.SECRET_KEY
-    app.config['SESSION_COOKIE_SECURE'] = Config.SESSION_COOKIE_SECURE
-    app.config['SESSION_COOKIE_HTTPONLY'] = Config.SESSION_COOKIE_HTTPONLY
-    app.config['SESSION_COOKIE_SAMESITE'] = Config.SESSION_COOKIE_SAMESITE
+    app.config['SESSION_COOKIE_NAME'] = 'brainwave_session'
+    app.config['SESSION_COOKIE_SECURE'] = True  # Changed to True for HTTPS
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+    app.config['SESSION_COOKIE_PATH'] = '/'
+    app.config['SESSION_COOKIE_DOMAIN'] = None  # Don't restrict domain
     app.config['PERMANENT_SESSION_LIFETIME'] = Config.PERMANENT_SESSION_LIFETIME
+    
+    # Fix for session not persisting - save session data
+    app.config['SESSION_REFRESH_EACH_REQUEST'] = True
     
     CORS(app, resources={
         r"/*": {
-            "origins": ["http://localhost:5173", "http://localhost:5000"],
-            "supports_credentials": True
+            "origins": ["http://localhost:5173", "http://localhost:5000", "https://brainwaveapi.teamuxh.site"],
+            "supports_credentials": True,
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"],
+            "expose_headers": ["Set-Cookie"],
+            "max_age": 3600
         }
     })
     
@@ -35,6 +53,7 @@ def create_app():
     # Register blueprints
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(user_bp, url_prefix='/api/users')
+    app.register_blueprint(assessment_bp, url_prefix='/api/assessments')
     
     @app.route('/health', methods=['GET'])
     def health_check():

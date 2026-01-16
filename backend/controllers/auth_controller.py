@@ -71,10 +71,10 @@ class AuthController:
     def get_frontend_redirect(success=True, message=None):
         """Generate frontend redirect URL"""
         if success:
-            return f'{Config.FRONTEND_URL}?login=success'
+            return f'{Config.FRONTEND_URL}/parent'
         else:
             error_msg = message or 'Authentication failed'
-            return f'{Config.FRONTEND_URL}?login=error&message={error_msg}'
+            return f'{Config.FRONTEND_URL}/select-user?login=error&message={error_msg}'
     
     @staticmethod
     def clear_session():

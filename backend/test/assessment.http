@@ -1,0 +1,79 @@
+### Assessment Routes
+
+# Create a new assessment
+POST http://localhost:5000/api/assessments
+Content-Type: application/json
+
+{
+  "childInfo": {
+    "name": "John Doe",
+    "age": 8,
+    "dominantHand": "right",
+    "previousAssessments": "No previous assessments",
+    "specificConcerns": "Difficulty with fine motor skills"
+  },
+  "testResults": [
+    {
+      "testId": "1",
+      "testName": "Writing Test",
+      "description": "Write a standardized 24-letter sentence",
+      "timeInSeconds": 45.5,
+      "completed": true
+    },
+    {
+      "testId": "2",
+      "testName": "Card Turning",
+      "description": "Turn over 5 playing cards",
+      "timeInSeconds": 12.3,
+      "completed": true
+    }
+  ],
+  "totalTime": 57.8,
+  "observations": {
+    "motorSkills": "Good coordination, slight tremor in dominant hand",
+    "concentration": "Maintained focus throughout the assessment",
+    "frustrationLevel": "Low frustration, cooperative",
+    "cooperationLevel": "Excellent cooperation",
+    "additionalNotes": "Child was eager to participate"
+  },
+  "assessmentDate": "2026-01-17T10:30:00.000Z",
+  "assessmentType": "Jebsen Hand Test"
+}
+
+###
+
+# Get all assessments for authenticated parent
+GET http://localhost:5000/api/assessments
+
+###
+
+# Get all assessments with pagination
+GET http://localhost:5000/api/assessments?limit=10&skip=0
+
+###
+
+# Get a specific assessment by ID
+GET http://localhost:5000/api/assessments/60a7c8f5e4b0a3d5c8e2f1a3
+
+###
+
+# Get all assessments for a specific child
+GET http://localhost:5000/api/assessments/child/John Doe
+
+###
+
+# Update an assessment
+PUT http://localhost:5000/api/assessments/60a7c8f5e4b0a3d5c8e2f1a3
+Content-Type: application/json
+
+{
+  "observations": {
+    "motorSkills": "Updated observation: Improved coordination",
+    "concentration": "Better focus in second session"
+  }
+}
+
+###
+
+# Delete an assessment
+DELETE http://localhost:5000/api/assessments/60a7c8f5e4b0a3d5c8e2f1a3

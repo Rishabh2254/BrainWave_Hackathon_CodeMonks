@@ -22,5 +22,5 @@ class Config:
     # Session
     SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
     SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SAMESITE = None
+    SESSION_COOKIE_SAMESITE = 'None'  # None for cross-origin, but requires Secure in production
     PERMANENT_SESSION_LIFETIME = 1800  # 30 minutes

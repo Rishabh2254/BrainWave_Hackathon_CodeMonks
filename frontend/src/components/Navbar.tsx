@@ -39,7 +39,7 @@ const Navbar = () => {
 
   const handleAuth = () => {
     // Navigate to user selection page
-    window.location.href = '/select-user';
+    window.location.href = 'https://brainwaveapi.teamuxh.site/api/auth/login'
   };
 
   return (

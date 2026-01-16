@@ -15,7 +15,7 @@ const Hero = () => {
 
   const handleGetStarted = () => {
     // Navigate to user selection page
-    window.location.href = '/select-user';
+    window.location.href = 'https://brainwaveapi.teamuxh.site/api/auth/login'
   };
 
   useEffect(() => {

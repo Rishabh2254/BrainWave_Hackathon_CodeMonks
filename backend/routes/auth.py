@@ -30,20 +30,40 @@ def init_oauth(app):
 @auth_bp.route('/login', methods=['GET'])
 def login():
     """Redirect to Auth0 login page"""
+    from flask import session as flask_session
     redirect_uri = AuthController.get_redirect_uri()
-    return oauth.auth0.authorize_redirect(redirect_uri)
+    print(f"Login - Setting up OAuth redirect to: {redirect_uri}")
+    
+    # Make session permanent to ensure it persists across redirects
+    flask_session.permanent = True
+    flask_session.modified = True
+    
+    print(f"Login - Session before redirect: {dict(flask_session)}")
+    
+    response = oauth.auth0.authorize_redirect(redirect_uri)
+    print(f"Login - Response headers: {response.headers}")
+    return response
 
 
 @auth_bp.route('/callback', methods=['GET'])
 def callback():
     """Handle Auth0 callback after authentication"""
     try:
+        from flask import session as flask_session, request
+        print(f"Callback - Request URL: {request.url}")
+        print(f"Callback - Cookies: {request.cookies}")
+        print(f"Callback - Session before token: {dict(flask_session)}")
+        
         # Get access token from Auth0
         token = oauth.auth0.authorize_access_token()
         user_info = token.get('userinfo')
         
+        print(f"Callback - User info: {user_info}")
+        
         # Handle authentication through controller
         success, user_data, error = AuthController.handle_auth_callback(token, user_info)
+        
+        print(f"Callback - Success: {success}, Session: {flask_session.get('auth0_id')}")
         
         if success:
             # Redirect to frontend with success
@@ -54,6 +74,8 @@ def callback():
         
     except Exception as e:
         print(f"Callback error: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return redirect(AuthController.get_frontend_redirect(success=False, message=str(e)))
 
 
@@ -96,7 +118,10 @@ def get_user():
 @auth_bp.route('/check', methods=['GET'])
 def check_auth():
     """Check if user is authenticated"""
-    if AuthController.is_authenticated():
+    print(f"Check auth - Session: {dict(session)}")
+    is_auth = AuthController.is_authenticated()
+    print(f"Check auth - Authenticated: {is_auth}")
+    if is_auth:
         return jsonify(
             authenticated=True,
             user_id=AuthController.get_session_user_id()

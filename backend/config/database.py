@@ -18,6 +18,10 @@ class Database:
     def users(self):
         return self.db.users
     
+    @property
+    def assessments(self):
+        return self.db.assessments
+    
     def close(self):
         self.client.close()
 
