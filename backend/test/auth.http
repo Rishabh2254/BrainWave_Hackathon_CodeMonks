@@ -1,0 +1,22 @@
+@baseUrl = http://localhost:5000
+
+### Health Check
+GET {{baseUrl}}/health
+
+### Check Authentication Status
+GET {{baseUrl}}/api/auth/check
+
+### Login (Redirects to Auth0)
+GET {{baseUrl}}/api/auth/login
+
+### Register (Redirects to Auth0 Signup)
+GET {{baseUrl}}/api/auth/register
+
+### Get Current User (Requires Authentication)
+GET {{baseUrl}}/api/auth/user
+
+### Logout
+GET {{baseUrl}}/api/auth/logout
+
+### Test Protected Route
+GET {{baseUrl}}/api/protected
