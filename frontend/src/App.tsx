@@ -6,6 +6,8 @@ import Hero, { ProblemSection, SolutionSection, FeaturesSection, ImpactSection }
 import SelectUser from './pages/SelectUser'
 import ChildInterface from './pages/ChildInterface'
 import ParentDashboard from './pages/ParentDashboard'
+import SpeechPractice from './components/SpeechPractice'
+import DailySchedule from './components/DailySchedule'
 
 // Landing Page Component
 const LandingPage = () => {
@@ -30,6 +32,8 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/select-user" element={<SelectUser />} />
             <Route path="/child" element={<ChildInterface />} />
+            <Route path="/child/speech-practice" element={<SpeechPractice />} />
+            <Route path="/child/daily-schedule" element={<DailySchedule />} />
             <Route path="/parent" element={<ParentDashboard />} />
           </Routes>
         </div>

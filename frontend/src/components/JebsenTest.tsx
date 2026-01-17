@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Check, Circle, ChevronRight, ChevronLeft, ClipboardList, Package, Play, FileText, Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Check, Circle, ChevronRight, ChevronLeft, ClipboardList, Package, Play, FileText, Loader2, FileSpreadsheet } from 'lucide-react';
 
 interface MaterialItem {
   id: string;
@@ -16,11 +16,20 @@ interface TestSubsection {
   completed: boolean;
 }
 
-const JebsenTest = () => {
+interface JebsenTestProps {
+  assessmentId?: string; // Optional prop to load existing assessment
+}
+
+const JebsenTest = ({ assessmentId }: JebsenTestProps = {}) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [materials, setMaterials] = useState<MaterialItem[]>([
+  const [savedAssessmentId, setSavedAssessmentId] = useState<string | null>(null);
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+  const [showReport, setShowReport] = useState(false);
+  const [reportContent, setReportContent] = useState<string>('');
+  const [existingReportChecked, setExistingReportChecked] = useState(false);
+  const [materials, setMaterialItems] = useState<MaterialItem[]>([
     { id: '1', name: 'Paper and Pen', description: 'For writing test', checked: false },
     { id: '2', name: 'Playing Cards (5 cards)', description: 'For card turning test', checked: false },
     { id: '3', name: 'Small Objects', description: 'Paper clips, bottle caps, coins (7 items)', checked: false },
@@ -68,7 +77,7 @@ const JebsenTest = () => {
   ];
 
   const toggleMaterial = (id: string) => {
-    setMaterials(materials.map(m => 
+    setMaterialItems(materials.map(m => 
       m.id === id ? { ...m, checked: !m.checked } : m
     ));
   };
@@ -140,28 +149,12 @@ const JebsenTest = () => {
       const result = await response.json();
       console.log('Assessment saved:', result);
       setSaveStatus('success');
+      // Backend returns { assessment: { id: ... } } structure
+      const assessmentId = result.assessment?.id || result._id;
+      setSavedAssessmentId(assessmentId);
+      console.log('Saved Assessment ID:', assessmentId);
       
-      // Reset form after successful save
-      setTimeout(() => {
-        setCurrentStep(0);
-        setChildInfo({
-          name: '',
-          age: '',
-          dominantHand: 'right',
-          previousAssessments: '',
-          specificConcerns: '',
-        });
-        setTestSections(testSections.map(t => ({ ...t, timeInSeconds: 0, completed: false })));
-        setObservations({
-          motorSkills: '',
-          concentration: '',
-          frustrationLevel: '',
-          cooperationLevel: '',
-          additionalNotes: '',
-        });
-        setMaterials(materials.map(m => ({ ...m, checked: false })));
-        setSaveStatus('idle');
-      }, 2000);
+      // Keep success status to show the report button
     } catch (error) {
       console.error('Error saving assessment:', error);
       setSaveStatus('error');
@@ -169,6 +162,93 @@ const JebsenTest = () => {
       setIsSaving(false);
     }
   };
+
+  const generateReport = async () => {
+    if (!savedAssessmentId) return;
+    
+    setIsGeneratingReport(true);
+    try {
+      const response = await fetch(
+        `https://brainwaveapi.teamuxh.site/api/reports/generate/${savedAssessmentId}`,
+        {
+          method: 'POST',
+          credentials: 'include'
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to generate report');
+      }
+
+      const result = await response.json();
+      setReportContent(result.report_content);
+      setShowReport(true);
+    } catch (error) {
+      console.error('Error generating report:', error);
+      alert('Failed to generate report. Please try again.');
+    } finally {
+      setIsGeneratingReport(false);
+    }
+  };
+
+  const resetForm = () => {
+    setCurrentStep(0);
+    setChildInfo({
+      name: '',
+      age: '',
+      dominantHand: 'right',
+      previousAssessments: '',
+      specificConcerns: '',
+    });
+    setTestSections(testSections.map(t => ({ ...t, timeInSeconds: 0, completed: false })));
+    setObservations({
+      motorSkills: '',
+      concentration: '',
+      frustrationLevel: '',
+      cooperationLevel: '',
+      additionalNotes: '',
+    });
+    setMaterialItems(materials.map(m => ({ ...m, checked: false })));
+    setSaveStatus('idle');
+    setSavedAssessmentId(null);
+    setShowReport(false);
+    setReportContent('');
+    setExistingReportChecked(false);
+  };
+
+  // Check for existing report when assessment is saved or when component loads with assessmentId
+  useEffect(() => {
+    const checkExistingReport = async () => {
+      const idToCheck = savedAssessmentId || assessmentId;
+      
+      if (idToCheck && !existingReportChecked) {
+        try {
+          const response = await fetch(
+            `https://brainwaveapi.teamuxh.site/api/reports/assessment/${idToCheck}`,
+            {
+              credentials: 'include'
+            }
+          );
+
+          if (response.ok) {
+            const data = await response.json();
+            if (data.exists && data.report) {
+              setReportContent(data.report.report_content);
+              setShowReport(true);
+              setSaveStatus('success'); // Ensure success state is set
+              setSavedAssessmentId(idToCheck); // Set the ID if it came from props
+            }
+          }
+        } catch (error) {
+          console.error('Error checking existing report:', error);
+        } finally {
+          setExistingReportChecked(true);
+        }
+      }
+    };
+
+    checkExistingReport();
+  }, [savedAssessmentId, assessmentId, existingReportChecked]);
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -570,16 +650,72 @@ const JebsenTest = () => {
         </div>
       )}
 
-      {/* Success Message */}
+      {/* Success Message with Report Button */}
       {saveStatus === 'success' && !isSaving && (
-        <div className="mt-6 bg-[#30D158]/10 border border-[#30D158] rounded-lg p-4 animate-fade-in">
-          <div className="flex items-center gap-3">
-            <div className="bg-[#30D158] rounded-full p-2">
-              <Check className="w-5 h-5 text-white" />
+        <div className="mt-6 space-y-4">
+          <div className="bg-[#30D158]/10 border border-[#30D158] rounded-lg p-4 animate-fade-in">
+            <div className="flex items-center gap-3">
+              <div className="bg-[#30D158] rounded-full p-2">
+                <Check className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="text-[#30D158] font-semibold">Assessment Saved Successfully!</p>
+                <p className="text-[#8E8E93] text-sm mt-1">Your assessment has been securely saved.</p>
+              </div>
             </div>
-            <div>
-              <p className="text-[#30D158] font-semibold">Assessment Saved Successfully!</p>
-              <p className="text-[#8E8E93] text-sm mt-1">Your assessment has been securely saved. Resetting form...</p>
+          </div>
+
+          {/* Generate Report Button */}
+          {savedAssessmentId && !showReport && (
+            <div className="flex gap-3">
+              <button
+                onClick={generateReport}
+                disabled={isGeneratingReport}
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-[#0A84FF] text-white rounded-xl font-semibold hover:bg-[#0A84FF]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isGeneratingReport ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Generating AI Report...
+                  </>
+                ) : (
+                  <>
+                    <FileSpreadsheet className="w-5 h-5" />
+                    Generate AI Report
+                  </>
+                )}
+              </button>
+              <button
+                onClick={resetForm}
+                className="px-6 py-4 bg-[#3A3A3C] text-white rounded-xl font-semibold hover:bg-[#48484A] transition-all"
+              >
+                New Assessment
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* AI Report Display */}
+      {showReport && reportContent && (
+        <div className="mt-6 bg-[#2C2C2E] rounded-2xl p-6 animate-fade-in">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-[#0A84FF] rounded-full p-2">
+                <FileSpreadsheet className="w-5 h-5 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-white">AI-Generated Assessment Report</h3>
+            </div>
+            <button
+              onClick={resetForm}
+              className="px-4 py-2 bg-[#30D158] text-white rounded-lg font-medium hover:bg-[#30D158]/90 transition-all"
+            >
+              New Assessment
+            </button>
+          </div>
+          <div className="bg-[#1C1C1E] rounded-xl p-6 prose prose-invert max-w-none">
+            <div className="text-[#E5E5E7] whitespace-pre-wrap leading-relaxed">
+              {reportContent}
             </div>
           </div>
         </div>

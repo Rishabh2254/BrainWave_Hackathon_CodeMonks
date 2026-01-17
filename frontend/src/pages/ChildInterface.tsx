@@ -81,21 +81,27 @@ const ChildInterface = () => {
 
           {/* Activity Cards */}
           <div className="grid md:grid-cols-3 gap-6">
-            {/* Game Activity */}
-            <div className="group relative p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-border hover:border-secondary-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-secondary-500/20 hover:-translate-y-2 cursor-pointer">
+            {/* Daily Schedule Activity */}
+            <div 
+              onClick={() => navigate('/child/daily-schedule')}
+              className="group relative p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-border hover:border-secondary-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-secondary-500/20 hover:-translate-y-2 cursor-pointer"
+            >
               <div className="absolute inset-0 bg-gradient-to-br from-secondary-500/0 to-secondary-600/0 group-hover:from-secondary-500/10 group-hover:to-secondary-600/5 transition-all duration-500 rounded-2xl" />
               
               <div className="relative z-10">
                 <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-secondary-500/20 to-secondary-600/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                   <Gamepad2 className="w-8 h-8 text-secondary-400" />
                 </div>
-                <h3 className="text-xl font-bold mb-2">Fun Games</h3>
-                <p className="text-sm text-muted-foreground">Interactive games and puzzles</p>
+                <h3 className="text-xl font-bold mb-2">Daily Schedule</h3>
+                <p className="text-sm text-muted-foreground">Your daily tasks and routines</p>
               </div>
             </div>
 
             {/* Speech Activity */}
-            <div className="group relative p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-border hover:border-accent-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-accent-500/20 hover:-translate-y-2 cursor-pointer">
+            <div 
+              onClick={() => navigate('/child/speech-practice')}
+              className="group relative p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-border hover:border-accent-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-accent-500/20 hover:-translate-y-2 cursor-pointer"
+            >
               <div className="absolute inset-0 bg-gradient-to-br from-accent-500/0 to-accent-600/0 group-hover:from-accent-500/10 group-hover:to-accent-600/5 transition-all duration-500 rounded-2xl" />
               
               <div className="relative z-10">

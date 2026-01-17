@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, LogOut, ClipboardList, Users } from 'lucide-react';
+import { Menu, X, LogOut, ClipboardList, Users, BarChart3, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import JebsenTest from '../components/JebsenTest.tsx';
+import ChildActivityDashboard from '../components/ChildActivityDashboard.tsx';
+import DailyActivityHeatmap from '../components/DailyActivityHeatmap.tsx';
 
 const ParentDashboard = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, isLoading, login, logout } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [activeTab, setActiveTab] = useState('jebsen');
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [redirecting, setRedirecting] = useState(false);
+  const [selectedChild] = useState(localStorage.getItem('selectedChild') || 'Child');
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated && !redirecting) {
@@ -63,11 +66,41 @@ const ParentDashboard = () => {
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-2">
           <button
+            onClick={() => setActiveTab('dashboard')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all relative ${
+              activeTab === 'dashboard'
+                ? 'bg-[#0A84FF] text-white'
+                : 'text-[#8E8E93] hover:bg-[#2C2C2E]'
+            }`}
+          >
+            <BarChart3 className="w-5 h-5 flex-shrink-0" />
+            {isSidebarOpen && <span className="text-sm font-medium">Activity Dashboard</span>}
+            {activeTab === 'dashboard' && (
+              <div className="absolute right-3 w-2 h-2 rounded-full bg-white animate-pulse" />
+            )}
+          </button>
+
+          <button
             onClick={() => navigate('/child')}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-[#8E8E93] hover:bg-[#2C2C2E]"
           >
             <Users className="w-5 h-5 flex-shrink-0" />
             {isSidebarOpen && <span className="text-sm font-medium">Select Child</span>}
+          </button>
+
+          <button
+            onClick={() => setActiveTab('daily-schedule')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all relative ${
+              activeTab === 'daily-schedule'
+                ? 'bg-[#0A84FF] text-white'
+                : 'text-[#8E8E93] hover:bg-[#2C2C2E]'
+            }`}
+          >
+            <Calendar className="w-5 h-5 flex-shrink-0" />
+            {isSidebarOpen && <span className="text-sm font-medium">Daily Schedule</span>}
+            {activeTab === 'daily-schedule' && (
+              <div className="absolute right-3 w-2 h-2 rounded-full bg-white animate-pulse" />
+            )}
           </button>
           
           <button
@@ -102,6 +135,12 @@ const ParentDashboard = () => {
       <main className="flex-1 overflow-y-auto h-screen bg-black">
         {/* Content Area */}
         <div className="p-8">
+          {activeTab === 'dashboard' && <ChildActivityDashboard />}
+          {activeTab === 'daily-schedule' && (
+            <div>
+              <DailyActivityHeatmap childName={selectedChild} />
+            </div>
+          )}
           {activeTab === 'jebsen' && <JebsenTest />}
         </div>
       </main>
