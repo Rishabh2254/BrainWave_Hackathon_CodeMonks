@@ -51,6 +51,222 @@ The **Parent Dashboard** acts as the control and monitoring center. Parents can:
 
 By combining AI managed child activities with parent side monitoring and guidance, EchoMind creates a closed feedback loop that improves personalization, consistency, and daily care efficiency.
 
+## OnDemand AI Integration
+
+EchoMind leverages **OnDemand.io's AI Agent Platform** to power intelligent analysis, personalized recommendations, and adaptive interactions throughout the application.
+
+### AI Agent Use Cases
+
+#### 1. **Jebsen Hand Function Test Analysis Agent**
+- **API Endpoint**: `/api/ondemand/generate-report`
+- **Functionality**: Analyzes test results with statistical comparisons using interquartile ranges
+- **Input**: Test completion times, observations, child demographics
+- **Output**: Detailed assessment report with:
+  - Statistical analysis comparing child performance to normative data
+  - Identification of specific motor skill delays or strengths
+  - Occupational therapy recommendations
+  - Home-based activity suggestions
+  - Follow-up timeline recommendations
+
+**Example Request**:
+```json
+{
+  "child_name": "Emma",
+  "age": 7,
+  "test_results": [
+    {
+      "testName": "Page Turning",
+      "timeInSeconds": 12.5,
+      "observations": {
+        "motorSkills": "Moderate difficulty with fine motor control",
+        "attention": "Good focus maintained"
+      }
+    }
+  ]
+}
+```
+
+#### 2. **Ice Breaker Social Training Agent**
+- **API Endpoint**: `/api/ondemand/chat`
+- **Functionality**: Conversational AI designed specifically for children with autism
+- **Features**:
+  - Simple, clear language patterns
+  - Warm and encouraging tone
+  - Predictable response structure
+  - Avoids idioms, sarcasm, and abstract concepts
+  - Topics: favorites, feelings, daily activities, interests
+  - Pattern-based fallback responses for offline mode
+
+**Agent Configuration**:
+```python
+# Autism-specific guidelines
+- Use 2-3 sentence responses maximum
+- Ask one question at a time
+- Validate child's feelings
+- Use emojis sparingly (😊)
+- Celebrate communication attempts
+- Offer choices when possible
+```
+
+#### 3. **Speech Practice Emotion Analysis Agent**
+- **Functionality**: Analyzes child's speech patterns and emotional tone
+- **Input**: Audio recordings from speech practice sessions
+- **Output**: 
+  - Emotion detection (happy, frustrated, calm, anxious)
+  - Speech clarity metrics
+  - Progress tracking over time
+  - Parent recommendations for communication strategies
+
+#### 4. **Daily Schedule Camera Monitoring Agent**
+- **Functionality**: Real-time video analysis during task completion
+- **Input**: Camera feed from Daily Schedule activities
+- **Output**:
+  - Task completion verification
+  - Engagement level assessment
+  - Behavioral pattern recognition
+  - Safety alerts (if child appears distressed)
+  - Progress documentation with timestamps
+
+### Media and Text API Integration
+
+#### Text Analysis APIs
+
+**1. Report Generation**
+```python
+# Backend: services/ondemand_service.py
+def generate_ai_report(assessment_data):
+    """
+    Generates comprehensive assessment reports
+    - Creates session with OnDemand API
+    - Formats assessment data with clinical context
+    - Returns markdown-free formatted report
+    """
+```
+
+**2. Conversational Intelligence**
+```python
+def generate_ice_breaker_response(user_message):
+    """
+    Generates autism-appropriate chat responses
+    - Context-aware conversation
+    - Child-friendly language
+    - Emotional validation
+    - Educational engagement
+    """
+```
+
+#### Media Analysis APIs
+
+**1. Camera Feed Analysis**
+```python
+# Endpoint: /api/ondemand/analyze-video
+def analyze_task_completion(video_stream):
+    """
+    Real-time video analysis for:
+    - Facial emotion recognition
+    - Task engagement metrics
+    - Posture and body language analysis
+    - Safety monitoring
+    """
+```
+
+**2. Speech Audio Analysis**
+```python
+# Endpoint: /api/ondemand/analyze-speech
+def analyze_speech_audio(audio_file):
+    """
+    Audio processing for:
+    - Speech clarity assessment
+    - Emotional tone detection
+    - Pronunciation accuracy
+    - Progress comparison
+    """
+```
+
+**3. Image-Based Emotion Detection**
+```python
+# Endpoint: /api/ondemand/analyze-emotion
+def detect_emotion_from_image(image_data):
+    """
+    Emotion analysis from captured images:
+    - Facial expression recognition
+    - Stress level indicators
+    - Engagement assessment
+    - Timestamped emotional states
+    """
+```
+
+### Agent Configuration
+
+All AI agents are configured with:
+
+**Session Management**:
+```python
+session_response = OnDemandService.create_session(user_id)
+session_id = session_response.get('data', {}).get('id')
+```
+
+**Query Submission**:
+```python
+response = OnDemandService.submit_query(session_id, formatted_query)
+answer = response.get('data', {}).get('answer')
+```
+
+**Response Cleaning**:
+```python
+clean_answer = OnDemandService.remove_markdown(answer)
+# Removes code blocks, headers, bold/italic, links, etc.
+```
+
+### Camera Analysis Integration
+
+The Daily Schedule feature includes live camera tracking:
+
+**Frontend Implementation**:
+```typescript
+// Camera initialization
+const startCamera = async () => {
+  const stream = await navigator.mediaDevices.getUserMedia({ 
+    video: { width: 320, height: 240 }, 
+    audio: false 
+  });
+  videoRef.current.srcObject = stream;
+};
+```
+
+**AI Enhancement**:
+- Frame capture every 5 seconds during task execution
+- Send to OnDemand vision API for analysis
+- Real-time feedback on task completion
+- Behavioral pattern detection
+- Parent notifications for significant events
+
+### API Rate Limits and Best Practices
+
+**OnDemand API Considerations**:
+- Session reuse for multiple queries when possible
+- Implement exponential backoff for retries
+- Cache common responses (fallback mode)
+- Monitor API usage and costs
+- Graceful degradation when API unavailable
+
+**Error Handling**:
+```python
+try:
+    response = generate_ai_report(data)
+except Exception as e:
+    # Fallback to template-based report
+    response = generate_fallback_report(data)
+```
+
+### Future AI Enhancements
+
+1. **Multimodal Analysis**: Combine video, audio, and text for comprehensive assessment
+2. **Predictive Analytics**: Forecast progress and identify intervention opportunities
+3. **Personalized Learning Paths**: AI-driven activity recommendations
+4. **Parent Coaching**: Real-time suggestions during parent-child interactions
+5. **Cross-Session Insights**: Long-term pattern recognition across activities
+
 ## Technology Stack
 
   React + Vite  
