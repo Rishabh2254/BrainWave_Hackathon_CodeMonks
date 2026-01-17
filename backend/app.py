@@ -15,6 +15,7 @@ from routes.assessment import assessment_bp
 from routes.speech_practice import speech_practice_bp
 from routes.report import report_bp
 from routes.daily_schedule import daily_schedule_bp
+from routes.ice_breaker import ice_breaker_bp
 from utils.decorators import requires_auth
 
 
@@ -60,6 +61,7 @@ def create_app():
     app.register_blueprint(speech_practice_bp, url_prefix='/api/speech-practice')
     app.register_blueprint(report_bp, url_prefix='/api/reports')
     app.register_blueprint(daily_schedule_bp, url_prefix='/api/daily-schedule')
+    app.register_blueprint(ice_breaker_bp, url_prefix='/api/ondemand')
     
     @app.route('/health', methods=['GET'])
     def health_check():

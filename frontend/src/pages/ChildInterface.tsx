@@ -114,15 +114,18 @@ const ChildInterface = () => {
             </div>
 
             {/* Learning Activity */}
-            <div className="group relative p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-border hover:border-primary-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-primary-500/20 hover:-translate-y-2 cursor-pointer">
+            <div 
+              onClick={() => navigate('/child/ice-breaker')}
+              className="group relative p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-border hover:border-primary-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-primary-500/20 hover:-translate-y-2 cursor-pointer"
+            >
               <div className="absolute inset-0 bg-gradient-to-br from-primary-500/0 to-primary-600/0 group-hover:from-primary-500/10 group-hover:to-primary-600/5 transition-all duration-500 rounded-2xl" />
               
               <div className="relative z-10">
                 <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary-500/20 to-primary-600/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                   <Brain className="w-8 h-8 text-primary-400" />
                 </div>
-                <h3 className="text-xl font-bold mb-2">Brain Training</h3>
-                <p className="text-sm text-muted-foreground">Memory and cognitive skills</p>
+                <h3 className="text-xl font-bold mb-2">Ice Breaker</h3>
+                <p className="text-sm text-muted-foreground">Social training and interaction</p>
               </div>
             </div>
           </div>

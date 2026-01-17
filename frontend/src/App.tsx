@@ -8,6 +8,7 @@ import ChildInterface from './pages/ChildInterface'
 import ParentDashboard from './pages/ParentDashboard'
 import SpeechPractice from './components/SpeechPractice'
 import DailySchedule from './components/DailySchedule'
+import IceBreakerChat from './components/IceBreakerChat'
 
 // Landing Page Component
 const LandingPage = () => {
@@ -34,6 +35,7 @@ function App() {
             <Route path="/child" element={<ChildInterface />} />
             <Route path="/child/speech-practice" element={<SpeechPractice />} />
             <Route path="/child/daily-schedule" element={<DailySchedule />} />
+            <Route path="/child/ice-breaker" element={<IceBreakerChat />} />
             <Route path="/parent" element={<ParentDashboard />} />
           </Routes>
         </div>
