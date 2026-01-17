@@ -12,6 +12,9 @@ from config.config import Config
 from routes.auth import auth_bp, init_oauth
 from routes.user import user_bp
 from routes.assessment import assessment_bp
+from routes.speech_practice import speech_practice_bp
+from routes.report import report_bp
+from routes.daily_schedule import daily_schedule_bp
 from utils.decorators import requires_auth
 
 
@@ -54,6 +57,9 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(user_bp, url_prefix='/api/users')
     app.register_blueprint(assessment_bp, url_prefix='/api/assessments')
+    app.register_blueprint(speech_practice_bp, url_prefix='/api/speech-practice')
+    app.register_blueprint(report_bp, url_prefix='/api/reports')
+    app.register_blueprint(daily_schedule_bp, url_prefix='/api/daily-schedule')
     
     @app.route('/health', methods=['GET'])
     def health_check():

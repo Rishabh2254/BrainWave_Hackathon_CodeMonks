@@ -22,6 +22,18 @@ class Database:
     def assessments(self):
         return self.db.assessments
     
+    @property
+    def speech_practice(self):
+        return self.db.speech_practice
+    
+    @property
+    def reports(self):
+        return self.db.reports
+    
+    @property
+    def daily_schedule_activities(self):
+        return self.db.daily_schedule_activities
+    
     def close(self):
         self.client.close()
 
