@@ -72,19 +72,19 @@ const Hero = () => {
   }, [])
 
   return (
-    <div id="hero" ref={heroRef} className="relative flex items-center justify-center overflow-hidden">
+    <div id="hero" ref={heroRef} className="relative flex items-center justify-center overflow-hidden mt-20">
       {/* Background gradient effects */}
       <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-primary-950/10" />
       <div className="absolute top-1/4 -right-1/4 w-[600px] h-[600px] bg-primary-500/5 rounded-full blur-3xl" />
       <div className="absolute -bottom-1/4 -left-1/4 w-[600px] h-[600px] bg-primary-600/5 rounded-full blur-3xl" />
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 py-20">
+      <div className="relative z-10 container mx-auto px-4 py-12">
         <div className="max-w-7xl mx-auto">
           {/* Two Column Layout */}
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[80vh]">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[60vh]">
             {/* Left Section - Content */}
-            <div className="space-y-8">
+            <div className="space-y-6">
               {/* Badge */}
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-500/10 border border-primary-500/20 backdrop-blur-sm">
                 <Sparkles className="w-4 h-4 text-primary-400" />
@@ -96,7 +96,7 @@ const Hero = () => {
               {/* Main Title */}
               <h1
                 ref={titleRef}
-                className="text-4xl md:text-6xl lg:text-7xl font-bold font-display leading-tight"
+                className="text-3xl md:text-5xl lg:text-6xl font-bold font-display leading-tight"
               >
                 Empowering Parents,
                 <br />
@@ -108,7 +108,7 @@ const Hero = () => {
               {/* Description */}
               <p
                 ref={subtitleRef}
-                className="text-lg md:text-xl text-muted-foreground leading-relaxed"
+                className="text-base md:text-lg text-muted-foreground leading-relaxed"
               >
                 EchoMind is an intelligent support platform designed exclusively for parents
                 of autistic children. Understand behavior, automate insights, and simplify
@@ -116,7 +116,7 @@ const Hero = () => {
               </p>
 
               {/* CTA Buttons */}
-              <div ref={ctaRef} className="flex flex-col sm:flex-row items-start gap-4 pt-4">
+              <div ref={ctaRef} className="flex flex-col sm:flex-row items-start gap-4 pt-2">
                 <button 
                   onClick={handleGetStarted}
                   className="group relative px-8 py-4 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary-500/25 overflow-hidden"
@@ -135,21 +135,18 @@ const Hero = () => {
             </div>
 
             {/* Right Section - Image Placeholder */}
-            <div ref={featureCardsRef} className="relative">
-              <div className="relative aspect-square lg:aspect-[4/5] rounded-2xl bg-gradient-to-br from-primary-500/10 to-primary-600/5 border border-primary-500/20 backdrop-blur-sm overflow-hidden">
-                {/* Placeholder content */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center space-y-4 p-8">
-                    <div className="w-24 h-24 mx-auto rounded-2xl bg-primary-500/20 flex items-center justify-center">
-                      <Brain className="w-12 h-12 text-primary-400" />
-                    </div>
-                    <p className="text-muted-foreground text-sm">Image Placeholder</p>
-                  </div>
-                </div>
+            <div ref={featureCardsRef} className="relative flex justify-center">
+              <div className="relative inline-block rounded-2xl bg-gradient-to-br from-primary-500/10 to-primary-600/5 border border-primary-500/20 backdrop-blur-sm overflow-hidden p-4">
+                {/* Image with natural dimensions */}
+                <img
+                  src="/banner_echomind.jpg"
+                  alt="EchoMind Banner"
+                  className="w-auto max-h-[300px] md:max-h-[500px] max-w-full rounded-lg"
+                />
                 
                 {/* Decorative elements */}
-                <div className="absolute top-10 right-10 w-20 h-20 rounded-full bg-primary-500/10 blur-2xl" />
-                <div className="absolute bottom-10 left-10 w-32 h-32 rounded-full bg-primary-600/10 blur-3xl" />
+                <div className="absolute top-10 right-10 w-20 h-20 rounded-full bg-primary-500/10 blur-2xl pointer-events-none" />
+                <div className="absolute bottom-10 left-10 w-32 h-32 rounded-full bg-primary-600/10 blur-3xl pointer-events-none" />
               </div>
             </div>
           </div>
